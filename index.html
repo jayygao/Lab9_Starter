@@ -69,39 +69,135 @@
     </form>
 
     <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
+      <button id="logBtn" onclick="handleLog()">Console Log</button>
+      <button id="errorBtn" onclick="handleError()">Console Error</button>
+      <button id="countBtn" onclick="handleCount()">Console Count</button>
+      <button id="warnBtn" onclick="handleWarn()">Console Warn</button>
+      <button id="assertBtn" onclick="handleAssert()">Console Assert</button>
+      <button id="clearBtn" onclick="handleClear()">Console Clear</button>
+      <button id="dirBtn" onclick="handleDir()">Console Dir</button>
+      <button id="xmlBtm" onclick="handleDirxml()">Console dirxml</button>
+      <button id="groupStartBtn" onclick="handleGroup1()">Console Group Start</button>
+      <button id="groupEndBtn" onclick="handleGroup2()">Console Group End</button>
+      <button id="tableBtn" onclick="handleTable()">Console Table</button>
+      <button id="startBtn" onclick="handleStart()">Start Timer</button>
+      <button id="endBtn" onclick="handleEnd()">End Timer</button>
+      <button id="traceBtn" onclick="handleTrace()">Console Trace</button>
       <button>Trigger a Global Error</button>
     </section>
   </main>
 
   <script>
+    class NotNumError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "Incompatible type: ";
+      }
+    }
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      try {
+        let output = document.querySelector('output');
+
+        if (!output) {
+          throw new Error("missing output element");
+        }
+
+        let firstNum = document.querySelector('#first-num').value;
+        let secondNum = document.querySelector('#second-num').value;
+        let operator = document.querySelector('#operator').value;
+
+        if (isNaN(firstNum) || isNaN(secondNum)) {
+          throw new NotNumError("only numbers, no char or strings");
+        }
+
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      } catch (err) {
+        console.error("got an error:", err.message);
+      } finally {
+        console.log("calculated good");
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+
+    const timerLabel = "timer: ";
+    let counter = 0;
+
+    function handleLog() {
+      console.log("Console Log Demo");
+    }
+
+    function handleError() {
+      console.error("Console Error Demo");
+    }
+
+    function handleCount() {
+      console.count("Count Button: ");
+    }
+
+    function handleWarn() {
+      console.warn("Console Warn Demo");
+    }
+
+    function handleAssert() {
+      const number = 2;
+      const expected = 3;
+      console.assert(
+        number === expected,
+        {
+          number: number,
+          errorMsg: `The number does not equal ${expected}`
+        }
+      );
+    }
+
+    function handleClear() {
+      console.clear();
+    }
+
+    function handleDir() {
+      const btn = document.getElementById("dirBtn");
+      console.dir(btn);
+    }
+
+    function handleDirxml() {
+      const btn = document.getElementById("xmlBtm");
+      console.dirxml(btn);
+    } 
+
+    function handleGroup1() {
+      console.group("console.group");
+    }
+
+    function handleGroup2() {
+      console.groupEnd();
+    }
+
+    function handleTable() {
+      console.table([
+        { name: "you", group: 10 },
+        { name: "jay", group: 30 }
+      ]);
+    }
+
+    function handleStart() {
+      console.time(timerLabel);
+    }
+
+    function handleEnd() {
+      console.timeEnd(timerLabel);
+    }
+
+    function handleTrace() {
+      console.trace("console.trace");
+    }
   </script>
 </body>
 
