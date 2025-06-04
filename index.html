@@ -83,10 +83,17 @@
       <button id="startBtn" onclick="handleStart()">Start Timer</button>
       <button id="endBtn" onclick="handleEnd()">End Timer</button>
       <button id="traceBtn" onclick="handleTrace()">Console Trace</button>
-      <button>Trigger a Global Error</button>
+      <button id="globalBtn" onclick="handleGlobal()">Trigger a Global Error</button>
     </section>
   </main>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "fc82edd75c194665b370d645c54a1856"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
   <script>
     class NotNumError extends Error {
       constructor(message) {
@@ -198,6 +205,18 @@
     function handleTrace() {
       console.trace("console.trace");
     }
+
+    function handleGlobal() {
+      console.log("triggering error..");
+      fakeFunction();
+    }
+
+    window.onerror = function (message, lineno, colno, error) {
+      console.log("caught global error!");
+      TrackJS.track("global error here: " + error);
+      console.log("at line: ", lineno, "column: ", colno);
+      return true;
+    };
   </script>
 </body>
 
